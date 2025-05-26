@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292364895242",
+    "project_id": "grocery-generic",
+    "storage_bucket": "grocery-generic.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292364895242:android:ad562b883297aa67df0bf3",
+        "android_client_info": {
+          "package_name": "com.xamtech.doorstep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO50MVwpGDww-n3x3o9lr1rAcvZpKlSjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
