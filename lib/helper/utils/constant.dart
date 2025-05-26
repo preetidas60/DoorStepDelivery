@@ -5,11 +5,10 @@ enum NetworkStatus { online, offline }
 enum ThemeList { systemDefault, light, dark }
 
 class Constant {
-  //Add your admin panel url here with postfix slash eg. https://www.admin.panel/
-  // TODO ADMIN PANEL URL HERE
+  // ADMIN PANEL URL
   static String hostUrl = "https://admin.grocery.xamtechinnovation.com/";
 
-  // ADD WEBSITE URL OR ADMIN PANEL URL HERE
+  // WEBSITE URL
   static String websiteUrl = "https://grocery.xamtechinnovation.com/";
 
   static String baseUrl = "${hostUrl}customer/";

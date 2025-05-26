@@ -57,7 +57,6 @@ dependencies:
   flutter_polyline_points: ^2.1.0
   ai_barcode_scanner: any
   file_picker: ^6.1.1
-  package_rename: ^1.10.0
   # mlkit_scanner: ^0.5.4
 
 dependency_overrides:
@@ -89,13 +88,4 @@ flutter:
     - assets/images/
     - assets/mapTheme/
 
-package_rename_config:
-  android:
-    app_name: DoorStep Delivery
-    package_name: com.xamtech.doorstep
-    override_old_package: com.xamtech.doorstep
 
-  ios:
-    app_name: DoorStep Delivery
-    bundle_name: Doorstep
-    package_name: com.xamtech.doorstep
