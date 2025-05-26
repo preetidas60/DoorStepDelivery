@@ -6,7 +6,7 @@ enum ThemeList { systemDefault, light, dark }
 
 class Constant {
   // ADMIN PANEL URL
-  static String hostUrl = "https://admin.grocery.xamtechinnovation.com/";
+  static String hostUrl = "https://egrocer.wrteam.me/";
 
   // WEBSITE URL
   static String websiteUrl = "https://grocery.xamtechinnovation.com/";
