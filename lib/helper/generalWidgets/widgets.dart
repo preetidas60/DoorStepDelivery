@@ -78,6 +78,8 @@ List getHomeBottomNavigationBarIcons({required bool isActive}) {
   ];
 }
 
+
+
 Widget setNetworkImg({
   double? height,
   double? width,
@@ -86,39 +88,57 @@ Widget setNetworkImg({
   BoxFit? boxFit,
   BorderRadius? borderRadius,
 }) {
-  if (image.trim().isNotEmpty && !image.contains("http")) {
+  if (image.trim().isEmpty) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        borderRadius: borderRadius,
+        color: Colors.grey[50],
+      ),
+    );
+  }
+
+  if (!image.contains("http")) {
     image = "${Constant.hostUrl}storage/$image";
   }
 
-  return image.trim().isEmpty
-      ? defaultImg(
-          image: "placeholder",
-          height: height,
-          width: width,
-          boxFit: boxFit,
-        )
-      : Container(
-          height: height,
-          width: width,
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(image),
-              fit: boxFit,
+  return ClipRRect(
+    borderRadius: borderRadius ?? BorderRadius.zero,
+    child: CachedNetworkImage(
+      imageUrl: image,
+      height: height,
+      width: width,
+      fit: boxFit ?? BoxFit.cover,
+      fadeInDuration: Duration(milliseconds: 500),
+      fadeOutDuration: Duration(milliseconds: 300),
+      placeholder: (context, url) => Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+        ),
+        child: Center(
+          child: Container(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
             ),
           ),
-          child: CachedNetworkImage(
-            imageUrl: image,
-            height: height,
-            width: width,
-            fit: boxFit,
-            placeholder: (context, url) => defaultImg(
-              image: "placeholder",
-              boxFit: boxFit,
-            ),
-          ),
-        );
+        ),
+      ),
+      errorWidget: (context, url, error) => Container(
+        height: height,
+        width: width,
+        color: Colors.grey[50],
+        child: Icon(Icons.image_outlined, color: Colors.grey[300], size: 40),
+      ),
+    ),
+  );
 }
+
 
 Widget defaultImg({
   double? height,
@@ -554,7 +574,7 @@ Widget setNotificationIcon({required BuildContext context}) {
     },
     icon: defaultImg(
       image: "notification_icon",
-      iconColor: ColorsRes.appColor,
+      iconColor: Color(0xffF4A300),
     ),
   );
 }

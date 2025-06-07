@@ -42,28 +42,54 @@ class _LoginAccountState extends State<LoginAccountScreen> {
               ? AuthProviders.google
               : AuthProviders.apple;
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Theme.of(context).cardColor,
       body: Stack(
         children: [
-          backgroundImageWidget(),
-          backgroundOverlayImageWidget(),
+          // Top image
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              alignment: Alignment.topCenter,
+              margin: EdgeInsets.only(top: 20), // Optional: spacing from top
+              padding: EdgeInsets.symmetric(horizontal: 30), // Optional: side padding
+              child: defaultImg(
+                image: "grocery4.png",
+                height: 200, // Adjust image height here
+                width: 100,  // Optional: set width too
+                boxFit: BoxFit.contain, // ✅ Valid BoxFit
+                iconColor: ColorsRes.mainTextColor,
+              ),
+            ),
+          ),
+
+          // Skip button on top of the image
           PositionedDirectional(
-            bottom: 0,
+            top: 30,
+            end: 10,
+            child: skipLoginText(),
+          ),
+
+          // Content below the image
+          PositionedDirectional(
+            top: 230, // same as the image height
             start: 0,
             end: 0,
+            bottom: 0,
             child: loginWidgets(),
           ),
+
+          // Loading overlay
           if (isLoading && authProvider != AuthProviders.phone)
-            PositionedDirectional(
-              top: 0,
-              end: 0,
-              bottom: 0,
-              start: 0,
+            Positioned.fill(
               child: Container(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: Colors.black.withAlpha(77),
                 child: Center(
                   child: CircularProgressIndicator(
                     color: ColorsRes.appColor,
@@ -71,15 +97,11 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 ),
               ),
             ),
-          PositionedDirectional(
-            top: 40,
-            end: 10,
-            child: skipLoginText(),
-          ),
         ],
       ),
     );
   }
+
 
   Widget proceedBtn() {
     return (isLoading && authProvider == AuthProviders.phone)
@@ -153,7 +175,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
           children: [
             getSizedBox(height: Constant.size20),
             Padding(
-              padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+              padding: EdgeInsetsDirectional.only(start: 20, end: 20, top: 20),
               child: RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(
@@ -173,7 +195,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                     TextSpan(
                       text: "\nDoorStep Delivery!",
                       // text: "${getTranslatedValue(context, "app_name")}!",
-                      style: TextStyle(
+                      style: GoogleFonts.lora(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                         fontSize: 30,
@@ -186,7 +208,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
             ),
             if (Constant.authTypePhoneLogin == "1" ||
                 Constant.authTypeEmailLogin == "1") ...[
-              getSizedBox(height: Constant.size40),
+              getSizedBox(height: Constant.size30),
               AnimatedOpacity(
                 opacity: showMobileNumberWidget ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 300),
@@ -236,8 +258,8 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                     end: 20,
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomTextLabel(
                         jsonKey: "dont_have_an_account",
@@ -258,11 +280,11 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   ),
                 ),
               ),
-              getSizedBox(height: Constant.size20),
+              getSizedBox(height: Constant.size30),
               if (Platform.isIOS && Constant.authTypeAppleLogin == "1" ||
                   Constant.authTypeGoogleLogin == "1")
                 buildDottedDivider(context),
-              getSizedBox(height: Constant.size20),
+              getSizedBox(height: Constant.size30),
             ],
             if (Platform.isIOS && Constant.authTypeAppleLogin == "1") ...[
               Padding(
@@ -365,48 +387,41 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   ),
                 ),
             ],
-            getSizedBox(height: Constant.size20),
-            Divider(color: ColorsRes.subTitleMainTextColor),
+            // Divider(color: ColorsRes.subTitleMainTextColor),
             getSizedBox(height: Constant.size20),
             Padding(
-              padding: EdgeInsetsDirectional.only(start: 30, end: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Center(
                 child: RichText(
-                  textAlign: TextAlign.start,
+                  textAlign: TextAlign.center, // ✅ Center-align text
                   text: TextSpan(
-                    style: Theme.of(context).textTheme.titleSmall!.merge(
-                          TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: ColorsRes.subTitleMainTextColor,
-                          ),
-                        ),
-                    text: "${getTranslatedValue(
-                      context,
-                      "agreement_message_1",
-                    )}\t",
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: ColorsRes.subTitleMainTextColor,
+                    ),
+                    text: getTranslatedValue(context, "agreement_message_1") + " ",
                     children: <TextSpan>[
                       TextSpan(
-                          text: getTranslatedValue(context, "terms_of_service"),
-                          style: TextStyle(
-                            color: ColorsRes.appColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushNamed(context, webViewScreen,
-                                  arguments: getTranslatedValue(
-                                    context,
-                                    "terms_and_conditions",
-                                  ));
-                            }),
+                        text: getTranslatedValue(context, "terms_of_service"),
+                        style: TextStyle(
+                          color: ColorsRes.appColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushNamed(
+                              context,
+                              webViewScreen,
+                              arguments: getTranslatedValue(context, "terms_and_conditions"),
+                            );
+                          },
+                      ),
                       TextSpan(
-                          text: "\t${getTranslatedValue(
-                            context,
-                            "and",
-                          )}\t",
-                          style: TextStyle(
-                            color: ColorsRes.subTitleMainTextColor,
-                          )),
+                        text: " ${getTranslatedValue(context, "and")} ",
+                        style: TextStyle(
+                          color: ColorsRes.subTitleMainTextColor,
+                        ),
+                      ),
                       TextSpan(
                         text: getTranslatedValue(context, "privacy_policy"),
                         style: TextStyle(
@@ -418,10 +433,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                             Navigator.pushNamed(
                               context,
                               webViewScreen,
-                              arguments: getTranslatedValue(
-                                context,
-                                "privacy_policy",
-                              ),
+                              arguments: getTranslatedValue(context, "privacy_policy"),
                             );
                           },
                       ),
@@ -430,6 +442,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 ),
               ),
             ),
+
             getSizedBox(height: Constant.size20),
           ],
         ),
@@ -448,7 +461,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
             visible: showMobileNumberWidget,
             child: Container(
               decoration: DesignConfig.boxDecoration(
-                  Theme.of(context).scaffoldBackgroundColor, 10,
+                  Colors.transparent, 10,
                   bordercolor: ColorsRes.subTitleMainTextColor,
                   isboarder: true,
                   borderwidth: 1.0),

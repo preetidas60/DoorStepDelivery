@@ -61,8 +61,8 @@ class DesignConfig {
 
   static BoxDecoration boxGradient(double radius,
       {Color? color1, Color? color2}) {
-    color1 ??= ColorsRes.gradient1;
-    color2 ??= ColorsRes.gradient2;
+    color1 ??= ColorsRes.appColor;
+    color2 ??= ColorsRes.appColor;
     return BoxDecoration(
         gradient: linearGradient(color1, color2),
         borderRadius: BorderRadius.circular(radius));

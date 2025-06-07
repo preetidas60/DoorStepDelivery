@@ -2,7 +2,7 @@ import 'package:project/helper/utils/generalImports.dart';
 
 class ColorsRes {
   static MaterialColor appColor = const MaterialColor(
-    0xff55AE7B,
+    0xffff712f,
     <int, Color>{
       50: Color(0xff55AE7B),
       100: Color(0xff55AE7B),
@@ -21,8 +21,8 @@ class ColorsRes {
   static Color appColorLightHalfTransparent = const Color(0x2655AE7B);
   static Color appColorDark = const Color(0xff3d8c68);
 
-  static Color gradient1 = const Color(0xff78c797);
-  static Color gradient2 = const Color(0xff55AE7B);
+  static Color gradient1 = const Color(0xffad955d);
+  static Color gradient2 = const Color(0xffad955d);
 
   static Color defaultPageInnerCircle = const Color(0x1A999999);
   static Color defaultPageOuterCircle = const Color(0x0d999999);
@@ -73,7 +73,7 @@ class ColorsRes {
       Colors.black.withValues(alpha: 0.005);
   static Color shimmerContentColorLight = Colors.white;
 
-  static Color activeRatingColor = Color(0xffF4CD32);
+  static Color activeRatingColor = Color(0xff55AE7B);
   static Color deActiveRatingColor = Color(0xffAEAEAE);
 
   static Color statusBgColorPendingPayment = Color(0xffFFF8EC);
@@ -135,7 +135,7 @@ class ColorsRes {
       surface: bgColorLight,
       brightness: Brightness.light,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: mainTextColor,
       surfaceTintColor: mainTextColor,
     ),
@@ -160,7 +160,7 @@ class ColorsRes {
       surface: bgColorDark,
       brightness: Brightness.dark,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: mainTextColor,
       surfaceTintColor: mainTextColor,
     ),

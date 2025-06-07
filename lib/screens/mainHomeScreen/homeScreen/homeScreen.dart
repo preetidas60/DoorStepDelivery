@@ -152,9 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ChangeNotifierProvider<SliderImagesProvider>(
                                 create: (context) => SliderImagesProvider(),
                                 child: SliderImageWidget(
-                                  sliders: homeScreenProvider
-                                          .homeScreenData.sliders ??
-                                      [],
+                                  sliders: homeScreenProvider.homeScreenData.sliders?.where((slider) =>
+                                  slider.imageUrl != null && slider.imageUrl!.isNotEmpty).toList() ?? [],
                                 ),
                               ),
                               // Below Slider Sections

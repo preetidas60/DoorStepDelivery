@@ -45,85 +45,91 @@ class _SliderImageWidgetState extends State<SliderImageWidget> {
   Widget build(BuildContext context) {
     return (widget.sliders.length != 0)
         ? Column(
-            children: [
-              SizedBox(
-                height: context.height * 0.28,
-                child: PageView.builder(
-                  controller: _pageController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.sliders.length,
-                  itemBuilder: (context, index) {
-                    Sliders sliderData = widget.sliders[index];
-                    return Padding(
-                      padding: EdgeInsetsDirectional.all(10),
-                      child: GestureDetector(
-                        onTap: () {
-                          callMethod(context
-                              .read<SliderImagesProvider>()
-                              .currentSliderImageIndex);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: ClipRRect(
-                            borderRadius: Constant.borderRadius10,
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: setNetworkImg(
-                              image: sliderData.imageUrl ?? "",
-                              boxFit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  onPageChanged: (value) {
-                    context
+      children: [
+        SizedBox(
+          height: context.height * 0.28,
+          child: PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.sliders.length,
+            itemBuilder: (context, index) {
+              Sliders sliderData = widget.sliders[index];
+              return Padding(
+                padding: EdgeInsetsDirectional.all(10),
+                child: GestureDetector(
+                  onTap: () {
+                    callMethod(context
                         .read<SliderImagesProvider>()
-                        .setSliderCurrentIndexImage(value);
+                        .currentSliderImageIndex);
+                  },
+                  child: Container(
+                    width: double.infinity, // Added: Full width
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: ClipRRect(
+                      borderRadius: Constant.borderRadius10,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: setNetworkImg(
+                        image: sliderData.imageUrl ?? "",
+                        boxFit: BoxFit.fill, // Changed: Use BoxFit.fill for exact fit
+                        // Alternative options:
+                        // boxFit: BoxFit.contain, // Shows entire image, may have empty space
+                        // boxFit: BoxFit.fitWidth, // Fits width, may crop height
+                        // boxFit: BoxFit.fitHeight, // Fits height, may crop width
+                        // boxFit: BoxFit.scaleDown, // Scales down if larger than container
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            onPageChanged: (value) {
+              context
+                  .read<SliderImagesProvider>()
+                  .setSliderCurrentIndexImage(value);
+            },
+          ),
+        ),
+        getSizedBox(
+          height: Constant.size2,
+        ),
+        Consumer<SliderImagesProvider>(
+          builder: (context, sliderImagesProvider, child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  widget.sliders.length,
+                      (index) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      height: Constant.size8,
+                      width:
+                      sliderImagesProvider.currentSliderImageIndex ==
+                          index
+                          ? 20
+                          : 8,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: Constant.size2),
+                      decoration: BoxDecoration(
+                          borderRadius:
+                          const BorderRadius.all(Radius.circular(10)),
+                          color: sliderImagesProvider
+                              .currentSliderImageIndex ==
+                              index
+                              ? Theme.of(context).primaryColor
+                              : ColorsRes.mainTextColor,
+                          shape: BoxShape.rectangle),
+                    );
                   },
                 ),
               ),
-              getSizedBox(
-                height: Constant.size2,
-              ),
-              Consumer<SliderImagesProvider>(
-                builder: (context, sliderImagesProvider, child) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        widget.sliders.length,
-                        (index) {
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: Constant.size8,
-                            width:
-                                sliderImagesProvider.currentSliderImageIndex ==
-                                        index
-                                    ? 20
-                                    : 8,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: Constant.size2),
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                color: sliderImagesProvider
-                                            .currentSliderImageIndex ==
-                                        index
-                                    ? Theme.of(context).primaryColor
-                                    : ColorsRes.mainTextColor,
-                                shape: BoxShape.rectangle),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          )
+            );
+          },
+        ),
+      ],
+    )
         : SizedBox.shrink();
   }
 

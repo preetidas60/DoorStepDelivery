@@ -16,38 +16,53 @@ class SocialMediaLoginButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: ColorsRes.mainTextColor),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Spacer(),
-          defaultImg(
-            image: logo,
-            height: 24,
-            width: 24,
-            iconColor: logoColor,
-            boxFit: BoxFit.fitWidth,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 0.001,
+            blurRadius: 30,
+            offset: Offset(0, 0),
           ),
-          getSizedBox(width: 10),
-          CustomTextLabel(
-            jsonKey: text,
-            style: TextStyle(
-              color: ColorsRes.mainTextColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Spacer(),
         ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).cardColor,
+          elevation: 0, // Remove default elevationR
+          shadowColor: Colors.transparent, // Remove default shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            // Removed the side parameter to eliminate the border
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Spacer(),
+            defaultImg(
+              image: logo,
+              height: 24,
+              width: 24,
+              iconColor: logoColor,
+              boxFit: BoxFit.fitWidth,
+            ),
+            getSizedBox(width: 10),
+            CustomTextLabel(
+              jsonKey: text,
+              style: TextStyle(
+                color: ColorsRes.mainTextColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Spacer(),
+          ],
+        ),
       ),
     );
   }
