@@ -1,5 +1,7 @@
 import 'package:project/helper/utils/generalImports.dart';
 
+import '../provider/sellerProvider.dart';
+
 class SellerListScreen extends StatefulWidget {
   const SellerListScreen({
     Key? key,

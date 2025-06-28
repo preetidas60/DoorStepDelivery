@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:project/helper/utils/generalImports.dart';
 
+import '../../provider/sellerProvider.dart';
+
 
 const String introSliderScreen = 'introSliderScreen';
 const String splashScreen = 'splashScreen';
