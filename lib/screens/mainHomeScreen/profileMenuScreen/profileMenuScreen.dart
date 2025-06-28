@@ -29,43 +29,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: getAppBar(
-        context: context,
+      appBar: AppBar(
         centerTitle: true,
-        title: CustomTextLabel(
-          jsonKey: "profile",
-          softWrap: true,
-          style: TextStyle(color: ColorsRes.mainTextColor),
+        title: Text(
+          getTranslatedValue(context, "profile"),
+          style: TextStyle(
+            color: ColorsRes.mainTextColor,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
         ),
-        showBackButton: false,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: Consumer<UserProfileProvider>(
         builder: (context, userProfileProvider, _) {
           setProfileMenuList();
-          return ListView(
-            controller: widget.scrollController,
-            children: [
-              ProfileHeader(),
-              QuickUseWidget(),
-              menuItemsContainer(
-                title: "personal_data",
-                menuItem: personalDataMenu,
-              ),
-              menuItemsContainer(
-                title: "settings",
-                menuItem: settingsMenu,
-              ),
-              menuItemsContainer(
-                title: "other_information",
-                menuItem: otherInformationMenu,
-              ),
-              menuItemsContainer(
-                title: "",
-                menuItem: deleteMenuItem,
-                fontColor: ColorsRes.appColorRed,
-                iconColor: ColorsRes.appColorRed,
-              ),
-            ],
+          return RefreshIndicator(
+            onRefresh: () async {},
+            child: ListView(
+              controller: widget.scrollController,
+              physics: AlwaysScrollableScrollPhysics(),
+              children: [
+                ProfileHeader(),
+                const SizedBox(height: 10),
+                QuickUseWidget(),
+                const SizedBox(height: 0),
+                _buildSection(
+                  title: getTranslatedValue(context, "personal_data"),
+                  items: personalDataMenu,
+                ),
+                _buildSection(
+                  title: getTranslatedValue(context, "settings"),
+                  items: settingsMenu,
+                  bottomPadding: 0, // Remove bottom padding for settings
+                ),
+                _buildSection(
+                  title: getTranslatedValue(context, "other_information"),
+                  items: otherInformationMenu,
+                  topPadding: 0, // Remove top padding for other information
+                ),
+                if (deleteMenuItem.isNotEmpty)
+                  _buildSection(
+                    items: deleteMenuItem,
+                    fontColor: ColorsRes.appColorRed,
+                  ),
+              ],
+            ),
           );
         },
       ),
@@ -313,99 +324,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ];
   }
 
-  Widget menuItemsContainer({
-    required String title,
-    required List menuItem,
-    Color? iconColor,
+
+  Widget _buildMenuItem({
+    required BuildContext context,
+    required String icon,
+    required String label,
+    Widget? value,
     Color? fontColor,
+    required VoidCallback onTap,
   }) {
-    if (menuItem.isNotEmpty) {
-      return Container(
-        decoration: DesignConfig.boxDecoration(Theme.of(context).cardColor, 5),
-        padding: EdgeInsetsDirectional.only(start: 10, end: 10),
-        margin: EdgeInsetsDirectional.only(
-          start: 10,
-          end: 10,
-          bottom: 10,
-          top: Constant.session.isUserLoggedIn() ? 0 : 10,
+    return ListTile(
+      onTap: onTap,
+      minLeadingWidth: 0,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: ColorsRes.appColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12), // Rounded corners
         ),
-        child: ListView(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            if (title.isNotEmpty) getSizedBox(height: 10),
-            if (title.isNotEmpty)
-              CustomTextLabel(
-                jsonKey: title,
+        child: Center(
+          child: defaultImg(
+            image: icon,
+            iconColor: fontColor ?? ColorsRes.appColor,
+            height: 20,
+            width: 20,
+          ),
+        ),
+      ),
+      title: Text(
+        getTranslatedValue(context, label),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: fontColor ?? ColorsRes.mainTextColor,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (value != null) value,
+          if (value != null) SizedBox(width: 8),
+          Icon(
+            Icons.chevron_right,
+            color: fontColor ?? ColorsRes.mainTextColor.withOpacity(0.6),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildSection({
+    String title = "",
+    required List<dynamic> items,
+    Color? fontColor,
+    double topPadding = 8, // Add top padding parameter
+    double bottomPadding = 24, // Add bottom padding parameter
+  }) {
+    if (items.isEmpty) return SizedBox.shrink();
+
+    return Padding(
+      padding: EdgeInsets.only(
+        top: topPadding, // Use top padding
+        bottom: bottomPadding, // Use bottom padding
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Text(
+                title,
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: ColorsRes.mainTextColor,
                 ),
               ),
-            if (title.isNotEmpty) getSizedBox(height: 10),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                menuItem.length,
-                (index) => Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        menuItem[index]['clickFunction'](context);
-                      },
-                      child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.only(top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            defaultImg(
-                              image: menuItem[index]['icon'],
-                              iconColor: iconColor ?? ColorsRes.mainTextColor,
-                              height: 24,
-                              width: 24,
-                            ),
-                            getSizedBox(width: 15),
-                            Expanded(
-                              child: CustomTextLabel(
-                                jsonKey: menuItem[index]['label'],
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: fontColor ?? ColorsRes.mainTextColor,
-                                ),
-                              ),
-                            ),
-                            if (menuItem[index]['value'] != null)
-                              menuItem[index]['value'],
-                            if (menuItem[index]['value'] != null)
-                              getSizedBox(width: 10),
-                            Icon(
-                              Icons.navigate_next,
-                              color: fontColor ??
-                                  ColorsRes.mainTextColor
-                                      .withValues(alpha: 0.5),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (index != menuItem.length - 1)
-                      getDivider(
-                        height: 5,
-                        color: fontColor ??
-                            ColorsRes.mainTextColor.withValues(alpha: 0.1),
-                      ),
-                  ],
-                ),
-              ),
             ),
-          ],
-        ),
-      );
-    } else {
-      return SizedBox.shrink();
-    }
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                )
+              ],
+            ),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: items.length,
+              separatorBuilder: (context, index) => Divider(
+                height: 1,
+                indent: 60,
+                endIndent: 20,
+                color: ColorsRes.mainTextColor.withOpacity(0.1),
+              ),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return _buildMenuItem(
+                  context: context,
+                  icon: item['icon'],
+                  label: item['label'],
+                  value: item['value'],
+                  fontColor: fontColor,
+                  onTap: () => item['clickFunction'](context),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
+
 }

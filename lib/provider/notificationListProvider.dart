@@ -34,12 +34,18 @@ class NotificationProvider extends ChangeNotifier {
       params[ApiAndParams.offset] = offset.toString();
 
       Map<String, dynamic> getData =
-          (await getNotificationApi(context: context, params: params));
+      (await getNotificationApi(context: context, params: params));
 
       if (getData[ApiAndParams.status].toString() == "1") {
         notificationList = NotificationList.fromJson(getData);
         totalData = int.parse(notificationList.total);
         List<NotificationListData> tempNotifications = notificationList.data;
+
+        // Filter out the "year end sale has started" notification
+        tempNotifications = tempNotifications.where((notification) {
+          return !notification.title.toLowerCase().contains("year end sale has started") &&
+              !notification.message.toLowerCase().contains("year end sale has started");
+        }).toList();
 
         notifications.addAll(tempNotifications);
       }

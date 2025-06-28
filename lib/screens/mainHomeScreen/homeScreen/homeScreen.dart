@@ -12,15 +12,42 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Map<String, List<OfferImages>> map = {};
+
+  // Animation controller for search widget
+  late AnimationController _searchAnimationController;
+  late Animation<Offset> _searchSlideAnimation;
+
+  // Scroll tracking variables
+  double _lastScrollOffset = 0.0;
+  bool _isSearchVisible = true;
+  static const double _scrollThreshold = 5.0; // Minimum scroll distance to trigger animation
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize animation controller
+    _searchAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _searchSlideAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0.0, -1.0),
+    ).animate(CurvedAnimation(
+      parent: _searchAnimationController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Add scroll listener
+    widget.scrollController.addListener(_handleScroll);
+
     //fetch productList from api
     Future.delayed(Duration.zero).then(
-      (value) async {
+          (value) async {
         await getAppSettings(context: context);
 
         Map<String, String> params = await Constant.getProductsDefaultParams();
@@ -42,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .getAllCartItems(context: context);
 
           await getUserDetail(context: context).then(
-            (value) {
+                (value) {
               if (value[ApiAndParams.status].toString() == "1") {
                 context
                     .read<UserProfileProvider>()
@@ -62,6 +89,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _handleScroll() {
+    final currentScrollOffset = widget.scrollController.offset;
+    final scrollDelta = currentScrollOffset - _lastScrollOffset;
+
+    // Only trigger animation if scroll delta exceeds threshold
+    if (scrollDelta.abs() > _scrollThreshold) {
+      if (scrollDelta > 0 && _isSearchVisible) {
+        // Scrolling down - hide search widget
+        _hideSearchWidget();
+      } else if (scrollDelta < 0 && !_isSearchVisible) {
+        // Scrolling up - show search widget
+        _showSearchWidget();
+      }
+    }
+
+    _lastScrollOffset = currentScrollOffset;
+
+    // Call the existing scroll listener for pagination
+    scrollListener();
+  }
+
+  void _hideSearchWidget() {
+    if (_isSearchVisible) {
+      _isSearchVisible = false;
+      _searchAnimationController.forward();
+    }
+  }
+
+  void _showSearchWidget() {
+    if (!_isSearchVisible) {
+      _isSearchVisible = true;
+      _searchAnimationController.reverse();
+    }
+  }
+
   scrollListener() async {
     // nextPageTrigger will have a value equivalent to 70% of the list size.
     var nextPageTrigger =
@@ -74,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context.read<ProductListProvider>().productState !=
                 ProductState.loadingMore) {
           Map<String, String> params =
-              await Constant.getProductsDefaultParams();
+          await Constant.getProductsDefaultParams();
 
           await context
               .read<ProductListProvider>()
@@ -86,12 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   dispose() {
+    widget.scrollController.removeListener(_handleScroll);
+    _searchAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final appBarHeight = MediaQuery.of(context).padding.top + kToolbarHeight;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: getAppBar(
         context: context,
         title: DeliveryAddressWidget(),
@@ -103,11 +170,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Stack(
         children: [
+          // Main scrollable content - this fills the entire screen
           Column(
             children: [
-              getSearchWidget(
-                context: context,
-              ),
+              // Add padding for AppBar space
+              SizedBox(height: appBarHeight),
               Expanded(
                 child: setRefreshIndicator(
                   refreshCallback: () async {
@@ -115,11 +182,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         .read<CartListProvider>()
                         .getAllCartItems(context: context);
                     Map<String, String> params =
-                        await Constant.getProductsDefaultParams();
+                    await Constant.getProductsDefaultParams();
                     return await context
                         .read<HomeScreenProvider>()
                         .getHomeScreenApiProvider(
-                            context: context, params: params);
+                        context: context, params: params);
                   },
                   child: SingleChildScrollView(
                     controller: widget.scrollController,
@@ -129,13 +196,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (homeScreenProvider.homeScreenState ==
                             HomeScreenState.loaded) {
                           for (int i = 0;
-                              i <
-                                  homeScreenProvider
-                                      .homeScreenData.sliders!.length;
-                              i++) {
+                          i <
+                              homeScreenProvider
+                                  .homeScreenData.sliders!.length;
+                          i++) {
                             precacheImage(
                               NetworkImage(homeScreenProvider
-                                      .homeScreenData.sliders?[i].imageUrl ??
+                                  .homeScreenData.sliders?[i].imageUrl ??
                                   ""),
                               context,
                             );
@@ -164,8 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   offerImages: map["below_slider"]!.toList(),
                                 ),
                               if (homeScreenProvider
-                                          .homeScreenData.categories !=
-                                      null &&
+                                  .homeScreenData.categories !=
+                                  null &&
                                   homeScreenProvider
                                       .homeScreenData.categories!.isNotEmpty)
                                 CategoryWidget(
@@ -196,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               getSizedBox(height: 10),
                               TitleHeaderWithViewAllOption(
                                 title:
-                                    getTranslatedValue(context, "all_products"),
+                                getTranslatedValue(context, "all_products"),
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,
@@ -208,14 +275,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               getSizedBox(height: 10),
                               ProductWidget(from: "product_listing"),
                               if (context
-                                      .watch<CartProvider>()
-                                      .totalItemsCount >
+                                  .watch<CartProvider>()
+                                  .totalItemsCount >
                                   0)
                                 getSizedBox(height: 65),
                             ],
                           );
                         } else if (homeScreenProvider.homeScreenState ==
-                                HomeScreenState.loading ||
+                            HomeScreenState.loading ||
                             homeScreenProvider.homeScreenState ==
                                 HomeScreenState.initial) {
                           return getHomeScreenShimmer(context);
@@ -225,11 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             message: homeScreenProvider.message,
                             callback: () async {
                               Map<String, String> params =
-                                  await Constant.getProductsDefaultParams();
+                              await Constant.getProductsDefaultParams();
                               await context
                                   .read<HomeScreenProvider>()
                                   .getHomeScreenApiProvider(
-                                      context: context, params: params);
+                                  context: context, params: params);
                             },
                           );
                         }
@@ -240,6 +307,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+
+          // Search widget positioned below AppBar
+          PositionedDirectional(
+            top: appBarHeight,
+            start: 0,
+            end: 0,
+            child: SlideTransition(
+              position: _searchSlideAnimation,
+              child: getSearchWidget(
+                context: context,
+              ),
+            ),
+          ),
+
+          // Cart overlay
           if (context.watch<CartProvider>().totalItemsCount > 0)
             PositionedDirectional(
               bottom: 0,

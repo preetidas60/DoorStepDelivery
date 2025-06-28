@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:project/helper/utils/generalImports.dart';
 
 Widget gradientBtnWidget(BuildContext context, double borderRadius,
@@ -299,54 +301,65 @@ Widget getSellerShimmer(
   );
 }
 
-AppBar getAppBar(
-    {required BuildContext context,
-    bool? centerTitle,
-    required Widget title,
-    List<Widget>? actions,
-    Color? backgroundColor,
-    bool? showBackButton,
-    GestureTapCallback? onTap}) {
-  return AppBar(
-    leading: showBackButton ?? true
-        ? GestureDetector(
-            onTap: onTap ??
-                () {
-                  Navigator.pop(context);
-                },
-            child: Container(
-              color: Colors.transparent,
-              child: Padding(
-                padding: EdgeInsets.all(18),
-                child: SizedBox(
-                  child: defaultImg(
-                    boxFit: BoxFit.contain,
-                    image: "ic_arrow_back",
-                    iconColor: ColorsRes.mainTextColor,
+PreferredSize getAppBar({
+  required BuildContext context,
+  bool? centerTitle,
+  required Widget title,
+  List<Widget>? actions,
+  Color? backgroundColor,
+  bool? showBackButton,
+  GestureTapCallback? onTap
+}) {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(kToolbarHeight),
+    child: Container(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+      ),
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+
+            // Remove flexibleSpace and apply background directly
+            leading: showBackButton ?? true
+                ? GestureDetector(
+              onTap: onTap ?? () => Navigator.pop(context),
+              child: Container(
+                color: Colors.transparent,
+                child: Padding(
+                  padding: EdgeInsets.all(18),
+                  child: SizedBox(
+                    height: 10,
+                    width: 10,
+                    child: defaultImg(
+                      boxFit: BoxFit.contain,
+                      image: "ic_arrow_back",
+                      iconColor: ColorsRes.mainTextColor,
+                    ),
                   ),
-                  height: 10,
-                  width: 10,
                 ),
               ),
+            )
+                : null,
+
+            title: Row(
+              children: [
+                if (showBackButton == false || !Navigator.of(context).canPop())
+                  getSizedBox(width: 10),
+                Expanded(child: title),
+              ],
             ),
-          )
-        : null,
-    automaticallyImplyLeading: true,
-    elevation: 0,
-    titleSpacing: 0,
-    title: Row(
-      children: [
-        if (showBackButton == false || !Navigator.of(context).canPop())
-          getSizedBox(
-            width: 10,
+
+            centerTitle: centerTitle ?? false,
+            actions: actions ?? [],
           ),
-        Expanded(child: title),
-      ],
+        ),
+      ),
     ),
-    centerTitle: centerTitle ?? false,
-    surfaceTintColor: Colors.transparent,
-    backgroundColor: backgroundColor ?? Theme.of(context).cardColor,
-    actions: actions ?? [],
   );
 }
 

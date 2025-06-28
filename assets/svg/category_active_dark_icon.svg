@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
-    <g transform="scale(0.04400)">
+    <g transform="scale(0.04500)">
         <!-- Top left rounded rectangle -->
-        <rect x="58" y="58" width="175" height="175" rx="35" ry="35" fill="#FCD77E"/>
+        <rect x="58" y="58" width="175" height="175" rx="35" ry="35" fill="none" stroke="#ff712f" stroke-width="30"/>
 
         <!-- Top right rounded rectangle -->
-        <rect x="279" y="58" width="175" height="175" rx="35" ry="35" fill="#FCD77E"/>
+        <rect x="279" y="58" width="175" height="175" rx="35" ry="35" fill="none" stroke="#ff712f" stroke-width="30"/>
 
         <!-- Bottom left rounded rectangle -->
-        <rect x="58" y="279" width="175" height="175" rx="35" ry="35" fill="#FCD77E"/>
+        <rect x="58" y="279" width="175" height="175" rx="35" ry="35" fill="none" stroke="#ff712f" stroke-width="30"/>
 
         <!-- Bottom right circle -->
-        <circle cx="366.5" cy="366.5" r="87.5" fill="#FCD77E"/>
+        <circle cx="366.5" cy="366.5" r="87.5" fill="none" stroke="#ff712f" stroke-width="30"/>
     </g>
 </svg>

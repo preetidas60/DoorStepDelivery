@@ -20,7 +20,9 @@ class DeliveryAddressWidget extends StatelessWidget {
           }
         });
       },
-      child: ListTile(
+      child: Container(
+        color: Colors.transparent, // or any color you want
+        child: ListTile(
         contentPadding: EdgeInsetsDirectional.zero,
         horizontalTitleGap: 0,
         leading: getDarkLightIcon(
@@ -61,6 +63,7 @@ class DeliveryAddressWidget extends StatelessWidget {
                     fontSize: 12, color: ColorsRes.subTitleMainTextColor),
               ),
       ),
+      )
     );
   }
 }

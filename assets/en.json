@@ -511,5 +511,6 @@
   "return_rejected": "Return Rejected",
   "return_reason": "Return Reason",
   "user_deactivated": "Your account has been deactivated. Please contact the admin for more details.",
-  "user_not_exist": "Provided Mobile Number not exist. Please register first"
+  "user_not_exist": "Provided Mobile Number not exist. Please register first",
+  "welcome_to": "Welcome to"
 }

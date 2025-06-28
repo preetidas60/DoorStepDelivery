@@ -52,7 +52,7 @@ class DefaultBlankItemMessageScreen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall!.merge(
                   TextStyle(
-                    color: Color(0xffFCD77E),
+                    color: Color(0xffff712f),
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),

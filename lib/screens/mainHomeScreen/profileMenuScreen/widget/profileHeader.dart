@@ -59,10 +59,8 @@ class ProfileHeader extends StatelessWidget {
                                       isBool: false,
                                       key: SessionManager.keyUserName,
                                     )
-                                  : getTranslatedValue(
-                                      context,
-                                      "welcome",
-                                    ),
+                                  :
+                                      "Welcome to DoorStep Delivery!",
                               style: TextStyle(
                                   color: ColorsRes.mainTextColor,
                                   fontWeight: FontWeight.bold,

@@ -39,14 +39,14 @@ class HomeMainScreenProvider extends ChangeNotifier {
   Future selectBottomMenu(int index) async {
     try {
       if (index == currentPage && scrollController[currentPage].offset > 0) {
-        scrollController[currentPage].animateTo(0,
-            duration: const Duration(milliseconds: 400), curve: Curves.linear);
+        // Change this to a quick jump instead of animation
+        scrollController[currentPage].jumpTo(0); // ← Instant jump (no animation)
       }
-
       currentPage = index;
     } catch (_) {}
     notifyListeners();
   }
+
 
   getCurrentPage() {
     return currentPage;
