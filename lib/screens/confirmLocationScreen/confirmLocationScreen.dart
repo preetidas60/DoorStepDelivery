@@ -248,12 +248,15 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
                           await checkPermission();
                         },
                         child: Container(
-                          decoration: DesignConfig.boxGradient(10),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 18),
+                          decoration: BoxDecoration(
+                            color: ColorsRes.appColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10),
+                                   // You can adjust the width
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                           child: defaultImg(
                             image: "my_location_icon",
-                            iconColor: ColorsRes.mainIconColor,
+                            iconColor: ColorsRes.appColor,
                           ),
                         ),
                       ),
@@ -315,14 +318,18 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                defaultImg(
-                  image: "address_icon",
-                  iconColor: ColorsRes.appColor,
-                  height: 25,
-                  width: 25,
+                getDarkLightIcon(
+                  image: "home_map",
+                  height: 35,
+                  width: 35,
+                  padding: EdgeInsetsDirectional.only(
+                    top: Constant.size2,
+                    bottom: Constant.size10,
+                    end: Constant.size14,
+                  ),
                 ),
                 getSizedBox(
-                  width: 20,
+                  width: 5,
                 ),
                 Expanded(
                   child: CustomTextLabel(

@@ -25,7 +25,7 @@ class TitleHeaderWithViewAllOption extends StatelessWidget {
                     width: 5,
                     height: 25,
                     decoration: BoxDecoration(
-                      color: ColorsRes.appColor,
+                      color: ColorsRes.appColor.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -81,7 +81,7 @@ class TitleHeaderWithViewAllOption extends StatelessWidget {
               getSizedBox(width: 5),
               Icon(
                 Icons.arrow_circle_right,
-                color: ColorsRes.appColor,
+                color: ColorsRes.appColor.withOpacity(0.7),
               ),
             ],
           ),

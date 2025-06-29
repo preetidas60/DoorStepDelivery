@@ -63,8 +63,8 @@ class _ProductVariantDropDownMenuListState
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: ColorsRes.appColor,
-                                  fontWeight: FontWeight.w500,
+                                  color: ColorsRes.mainTextColor,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                               getSizedBox(width: 5),

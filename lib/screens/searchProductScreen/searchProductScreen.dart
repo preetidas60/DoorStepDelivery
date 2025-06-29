@@ -430,15 +430,29 @@ class _ProductListScreenState extends State<ProductSearchScreen> {
   //Start search widget
   searchWidget() {
     return Container(
-      color: Theme.of(context).cardColor,
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.symmetric(
           horizontal: Constant.size10, vertical: Constant.size10),
       child: Row(
         children: [
           Expanded(
             child: Container(
-              decoration: DesignConfig.boxDecoration(
-                  Theme.of(context).scaffoldBackgroundColor, 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.grey.withOpacity(0.3),
+                  width: 1.0,
+                ),
+                // Optional: Add a subtle shadow for better visual depth
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
               child: ListTile(
                 dense: true,
                 visualDensity: VisualDensity.compact,

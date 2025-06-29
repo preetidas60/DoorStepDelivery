@@ -17,13 +17,13 @@ class _LoginAccountState extends State<LoginAccountScreen> {
 
   // TODO REMOVE DEMO NUMBER FROM HERE
   TextEditingController editMobileTextEditingController =
-      TextEditingController(text: "");
+  TextEditingController(text: "");
   final TextEditingController editEmailTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController editPasswordTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController editPhonePasswordTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final pinController = TextEditingController();
   String otpVerificationId = "";
   int? forceResendingToken;
@@ -37,14 +37,24 @@ class _LoginAccountState extends State<LoginAccountScreen> {
   AuthProviders authProvider = Constant.authTypePhoneLogin == "1"
       ? AuthProviders.phone
       : Constant.authTypeEmailLogin == "1"
-          ? AuthProviders.emailPassword
-          : Constant.authTypeGoogleLogin == "1"
-              ? AuthProviders.google
-              : AuthProviders.apple;
-
+      ? AuthProviders.emailPassword
+      : Constant.authTypeGoogleLogin == "1"
+      ? AuthProviders.google
+      : AuthProviders.apple;
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions for responsive design
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+    final maxContentWidth = isTablet ? 500.0 : screenWidth;
+
+    // Calculate responsive values
+    final topImageHeight = screenHeight * 0.25; // 25% of screen height
+    final horizontalPadding = screenWidth * 0.05; // 5% of screen width
+    final contentTopMargin = topImageHeight + (screenHeight * 0.02); // Image height + 2% margin
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).cardColor,
@@ -57,13 +67,13 @@ class _LoginAccountState extends State<LoginAccountScreen> {
             right: 0,
             child: Container(
               alignment: Alignment.topCenter,
-              margin: EdgeInsets.only(top: 20), // Optional: spacing from top
-              padding: EdgeInsets.symmetric(horizontal: 30), // Optional: side padding
+              margin: EdgeInsets.only(top: screenHeight * 0.025), // 2.5% of screen height
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: defaultImg(
                 image: "grocery4.png",
-                height: 200, // Adjust image height here
-                width: 100,  // Optional: set width too
-                boxFit: BoxFit.contain, // ✅ Valid BoxFit
+                height: topImageHeight * 0.8, // 80% of allocated image space
+                width: screenWidth * 0.6, // 60% of screen width
+                boxFit: BoxFit.contain,
                 iconColor: ColorsRes.mainTextColor,
               ),
             ),
@@ -71,18 +81,23 @@ class _LoginAccountState extends State<LoginAccountScreen> {
 
           // Skip button on top of the image
           PositionedDirectional(
-            top: 30,
-            end: 10,
+            top: screenHeight * 0.04, // 4% from top
+            end: horizontalPadding * 0.5,
             child: skipLoginText(),
           ),
 
           // Content below the image
           PositionedDirectional(
-            top: 230, // same as the image height
+            top: contentTopMargin,
             start: 0,
             end: 0,
             bottom: 0,
-            child: loginWidgets(),
+            child: Center(
+              child: Container(
+                width: maxContentWidth,
+                child: loginWidgets(),
+              ),
+            ),
           ),
 
           // Loading overlay
@@ -102,32 +117,37 @@ class _LoginAccountState extends State<LoginAccountScreen> {
     );
   }
 
-
   Widget proceedBtn() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final buttonHeight = screenHeight * 0.065; // 6.5% of screen height
+
     return (isLoading && authProvider == AuthProviders.phone)
         ? Container(
-            height: 55,
-            alignment: AlignmentDirectional.center,
-            child: CircularProgressIndicator(),
-          )
+      height: buttonHeight,
+      alignment: AlignmentDirectional.center,
+      child: CircularProgressIndicator(),
+    )
         : gradientBtnWidget(
-            context,
-            10,
-            title: getTranslatedValue(
-              context,
-              "login",
-            ).toUpperCase(),
-            callback: () {
-              if (authProvider == AuthProviders.phone) {
-                loginWithPhoneNumber();
-              } else if (authProvider == AuthProviders.emailPassword) {
-                loginWithEmailIdPassword();
-              }
-            },
-          );
+      context,
+      10,
+      title: getTranslatedValue(
+        context,
+        "login",
+      ).toUpperCase(),
+      callback: () {
+        if (authProvider == AuthProviders.phone) {
+          loginWithPhoneNumber();
+        } else if (authProvider == AuthProviders.emailPassword) {
+          loginWithEmailIdPassword();
+        }
+      },
+    );
   }
 
   Widget skipLoginText() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth * 0.035; // 3.5% of screen width
+
     return GestureDetector(
       onTap: () async {
         if (isLoading == false) {
@@ -142,22 +162,32 @@ class _LoginAccountState extends State<LoginAccountScreen> {
           color: Theme.of(context).cardColor.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(5),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.025, // 2.5% of screen width
+          vertical: screenWidth * 0.0125, // 1.25% of screen width
+        ),
         child: CustomTextLabel(
           jsonKey: "skip_login",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: ColorsRes.mainTextColor,
-              ),
+            color: ColorsRes.mainTextColor,
+            fontSize: fontSize,
+          ),
         ),
       ),
     );
   }
 
   Widget loginWidgets() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth * 0.05; // 5% of screen width
+    final verticalSpacing = screenHeight * 0.025; // 2.5% of screen height
+    final titleFontSize = screenWidth * 0.075; // 7.5% of screen width (responsive title)
+
     return Container(
       clipBehavior: Clip.antiAliasWithSaveLayer,
       constraints: BoxConstraints(
-        maxHeight: context.height * 0.76,
+        maxHeight: screenHeight * 0.76,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -168,25 +198,30 @@ class _LoginAccountState extends State<LoginAccountScreen> {
       ),
       child: SingleChildScrollView(
         padding: EdgeInsetsDirectional.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom),
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            getSizedBox(height: Constant.size20),
+            SizedBox(height: verticalSpacing * 0.8),
             Padding(
-              padding: EdgeInsetsDirectional.only(start: 20, end: 20, top: 20),
+              padding: EdgeInsetsDirectional.only(
+                start: horizontalPadding,
+                end: horizontalPadding,
+                top: verticalSpacing * 0.8,
+              ),
               child: RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(
                   style: Theme.of(context).textTheme.titleSmall!.merge(
-                        TextStyle(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                          fontSize: 30,
-                          color: ColorsRes.mainTextColor,
-                        ),
-                      ),
+                    TextStyle(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                      fontSize: titleFontSize,
+                      color: ColorsRes.mainTextColor,
+                    ),
+                  ),
                   text: "${getTranslatedValue(
                     context,
                     "welcome",
@@ -194,11 +229,10 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   children: <TextSpan>[
                     TextSpan(
                       text: "\nDoorStep Delivery!",
-                      // text: "${getTranslatedValue(context, "app_name")}!",
                       style: GoogleFonts.lora(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
-                        fontSize: 30,
+                        fontSize: titleFontSize,
                         color: ColorsRes.appColor,
                       ),
                     ),
@@ -208,14 +242,17 @@ class _LoginAccountState extends State<LoginAccountScreen> {
             ),
             if (Constant.authTypePhoneLogin == "1" ||
                 Constant.authTypeEmailLogin == "1") ...[
-              getSizedBox(height: Constant.size30),
+              SizedBox(height: verticalSpacing * 1.2),
               AnimatedOpacity(
                 opacity: showMobileNumberWidget ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 300),
                 child: Visibility(
                   visible: showMobileNumberWidget,
                   child: Container(
-                    margin: EdgeInsetsDirectional.only(start: 20, end: 20),
+                    margin: EdgeInsetsDirectional.only(
+                      start: horizontalPadding,
+                      end: horizontalPadding,
+                    ),
                     child: mobilePasswordWidget(),
                   ),
                 ),
@@ -226,17 +263,23 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 child: Visibility(
                   visible: !showMobileNumberWidget,
                   child: Container(
-                    margin: EdgeInsetsDirectional.only(start: 20, end: 20),
+                    margin: EdgeInsetsDirectional.only(
+                      start: horizontalPadding,
+                      end: horizontalPadding,
+                    ),
                     child: emailPasswordWidget(),
                   ),
                 ),
               ),
-              getSizedBox(height: Constant.size20),
+              SizedBox(height: verticalSpacing * 0.8),
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+                padding: EdgeInsetsDirectional.only(
+                  start: horizontalPadding,
+                  end: horizontalPadding,
+                ),
                 child: proceedBtn(),
               ),
-              getSizedBox(height: Constant.size20),
+              SizedBox(height: verticalSpacing * 0.8),
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pushNamed(
@@ -255,7 +298,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 },
                 child: Padding(
                   padding: EdgeInsetsDirectional.only(
-                    end: 20,
+                    end: horizontalPadding,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -266,29 +309,34 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                         style: TextStyle(
                           color: ColorsRes.subTitleMainTextColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: screenWidth * 0.035, // Responsive font size
                         ),
                       ),
-                      getSizedBox(width: 5),
+                      SizedBox(width: screenWidth * 0.0125), // Responsive spacing
                       CustomTextLabel(
                         jsonKey: "wants_to_register",
                         style: TextStyle(
                           color: ColorsRes.appColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: screenWidth * 0.035, // Responsive font size
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              getSizedBox(height: Constant.size30),
+              SizedBox(height: verticalSpacing * 1.2),
               if (Platform.isIOS && Constant.authTypeAppleLogin == "1" ||
                   Constant.authTypeGoogleLogin == "1")
                 buildDottedDivider(context),
-              getSizedBox(height: Constant.size30),
+              SizedBox(height: verticalSpacing * 1.2),
             ],
             if (Platform.isIOS && Constant.authTypeAppleLogin == "1") ...[
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+                padding: EdgeInsetsDirectional.only(
+                  start: horizontalPadding,
+                  end: horizontalPadding,
+                ),
                 child: SocialMediaLoginButtonWidget(
                   text: "continue_with_apple",
                   logo: "apple_logo",
@@ -300,7 +348,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                       firebaseAuth: firebaseAuth,
                       googleSignIn: googleSignIn,
                     ).then(
-                      (value) {
+                          (value) {
                         setState(() {
                           isLoading = true;
                         });
@@ -321,28 +369,31 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   },
                 ),
               ),
-              getSizedBox(height: 10),
+              SizedBox(height: verticalSpacing * 0.4),
             ],
             if (Constant.authTypeGoogleLogin == "1")
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+                padding: EdgeInsetsDirectional.only(
+                  start: horizontalPadding,
+                  end: horizontalPadding,
+                ),
                 child: SocialMediaLoginButtonWidget(
                   text: "continue_with_google",
                   logo: "google_logo",
                   onPressed: () async {
                     authProvider = AuthProviders.google;
                     signOut(
-                            googleSignIn: googleSignIn,
-                            authProvider: authProvider,
-                            firebaseAuth: firebaseAuth)
+                        googleSignIn: googleSignIn,
+                        authProvider: authProvider,
+                        firebaseAuth: firebaseAuth)
                         .then(
-                      (value) async {
+                          (value) async {
                         await signInWithGoogle(
                           context: context,
                           firebaseAuth: firebaseAuth,
                           googleSignIn: googleSignIn,
                         ).then(
-                          (value) {
+                              (value) {
                             if (value is UserCredential) {
                               backendApiProcess(value.user);
                             } else {
@@ -360,7 +411,10 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 Constant.authTypePhoneLogin == "1") ...[
               if (showMobileNumberWidget)
                 Padding(
-                  padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+                  padding: EdgeInsetsDirectional.only(
+                    start: horizontalPadding,
+                    end: horizontalPadding,
+                  ),
                   child: SocialMediaLoginButtonWidget(
                     text: "continue_with_email",
                     logo: "email_logo",
@@ -374,7 +428,10 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 ),
               if (!showMobileNumberWidget)
                 Padding(
-                  padding: EdgeInsetsDirectional.only(start: 20, end: 20),
+                  padding: EdgeInsetsDirectional.only(
+                    start: horizontalPadding,
+                    end: horizontalPadding,
+                  ),
                   child: SocialMediaLoginButtonWidget(
                     text: "continue_with_phone",
                     logo: "phone_logo",
@@ -387,17 +444,17 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   ),
                 ),
             ],
-            // Divider(color: ColorsRes.subTitleMainTextColor),
-            getSizedBox(height: Constant.size20),
+            SizedBox(height: verticalSpacing * 0.8),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 1.5),
               child: Center(
                 child: RichText(
-                  textAlign: TextAlign.center, // ✅ Center-align text
+                  textAlign: TextAlign.center,
                   text: TextSpan(
                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
                       fontWeight: FontWeight.w400,
                       color: ColorsRes.subTitleMainTextColor,
+                      fontSize: screenWidth * 0.032, // Responsive font size
                     ),
                     text: getTranslatedValue(context, "agreement_message_1") + " ",
                     children: <TextSpan>[
@@ -406,6 +463,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                         style: TextStyle(
                           color: ColorsRes.appColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: screenWidth * 0.032, // Responsive font size
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -420,6 +478,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                         text: " ${getTranslatedValue(context, "and")} ",
                         style: TextStyle(
                           color: ColorsRes.subTitleMainTextColor,
+                          fontSize: screenWidth * 0.032, // Responsive font size
                         ),
                       ),
                       TextSpan(
@@ -427,6 +486,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                         style: TextStyle(
                           color: ColorsRes.appColor,
                           fontWeight: FontWeight.w500,
+                          fontSize: screenWidth * 0.032, // Responsive font size
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -442,8 +502,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                 ),
               ),
             ),
-
-            getSizedBox(height: Constant.size20),
+            SizedBox(height: verticalSpacing * 0.8),
           ],
         ),
       ),
@@ -451,6 +510,10 @@ class _LoginAccountState extends State<LoginAccountScreen> {
   }
 
   mobilePasswordWidget() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final verticalSpacing = screenHeight * 0.025; // 2.5% of screen height
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -467,7 +530,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                   borderwidth: 1.0),
               child: Row(
                 children: [
-                  getSizedBox(width: Constant.size5),
+                  SizedBox(width: screenWidth * 0.0125), // Responsive spacing
                   IgnorePointer(
                     ignoring: isLoading,
                     child: CountryCodePicker(
@@ -480,9 +543,12 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                       initialSelection: Constant.initialCountryCode,
                       textOverflow: TextOverflow.ellipsis,
                       backgroundColor: Theme.of(context).cardColor,
-                      textStyle: TextStyle(color: ColorsRes.mainTextColor),
+                      textStyle: TextStyle(
+                        color: ColorsRes.mainTextColor,
+                        fontSize: screenWidth * 0.038, // Responsive font size
+                      ),
                       dialogBackgroundColor: Theme.of(context).cardColor,
-                      dialogSize: Size(context.width, context.height),
+                      dialogSize: Size(screenWidth, screenHeight),
                       barrierColor: ColorsRes.subTitleMainTextColor,
                       padding: EdgeInsets.zero,
                       searchDecoration: InputDecoration(
@@ -511,18 +577,20 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                       ),
                       searchStyle: TextStyle(
                         color: ColorsRes.subTitleMainTextColor,
+                        fontSize: screenWidth * 0.038, // Responsive font size
                       ),
                       dialogTextStyle: TextStyle(
                         color: ColorsRes.mainTextColor,
+                        fontSize: screenWidth * 0.038, // Responsive font size
                       ),
                     ),
                   ),
                   Icon(
                     Icons.keyboard_arrow_down,
                     color: ColorsRes.grey,
-                    size: 15,
+                    size: screenWidth * 0.038, // Responsive icon size
                   ),
-                  getSizedBox(width: Constant.size10),
+                  SizedBox(width: screenWidth * 0.025), // Responsive spacing
                   Expanded(
                     child: TextField(
                       controller: editMobileTextEditingController,
@@ -532,15 +600,17 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                       ],
                       style: TextStyle(
                         color: ColorsRes.mainTextColor,
+                        fontSize: screenWidth * 0.038, // Responsive font size
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         isDense: true,
                         hintStyle: TextStyle(
                           color: ColorsRes.grey.withValues(alpha: 0.8),
+                          fontSize: screenWidth * 0.038, // Responsive font size
                         ),
                         hintText:
-                            getTranslatedValue(context, "phone_number_hint"),
+                        getTranslatedValue(context, "phone_number_hint"),
                       ),
                     ),
                   )
@@ -550,89 +620,94 @@ class _LoginAccountState extends State<LoginAccountScreen> {
           ),
         ),
         (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
-                "1")
-            ? getSizedBox(height: Constant.size20)
+            "1")
+            ? SizedBox(height: verticalSpacing * 0.8)
             : const SizedBox.shrink(),
         (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
-                "1")
+            "1")
             ? AnimatedOpacity(
-                opacity: showMobileNumberWidget ? 1.0 : 0.0,
-                duration: Duration(milliseconds: 300),
-                child: Visibility(
-                  visible: showMobileNumberWidget,
-                  child: Consumer<PasswordShowHideProvider>(
-                    builder: (context, provider, child) {
-                      return editBoxWidget(
-                        context,
-                        editPhonePasswordTextEditingController,
-                        emptyValidation,
-                        getTranslatedValue(
-                          context,
-                          "password",
-                        ),
-                        getTranslatedValue(
-                          context,
-                          "enter_valid_password",
-                        ),
-                        floatingLabelBehavior: FloatingLabelBehavior.never,
-                        leadingIcon: Icon(
-                          Icons.password_rounded,
-                          color: ColorsRes.grey,
-                          size: 25,
-                        ),
-                        maxLines: 1,
-                        fillColor: Theme.of(context).scaffoldBackgroundColor,
-                        obscureText: provider.isPasswordShowing(),
-                        tailIcon: GestureDetector(
-                          onTap: () {
-                            provider.togglePasswordVisibility();
-                          },
-                          child: defaultImg(
-                            image: provider.isPasswordShowing() == true
-                                ? "hide_password"
-                                : "show_password",
-                            iconColor: ColorsRes.grey,
-                            width: 13,
-                            height: 13,
-                            padding: EdgeInsetsDirectional.all(12),
-                          ),
-                        ),
-                        optionalTextInputAction: TextInputAction.done,
-                        TextInputType.text,
-                      );
-                    },
+          opacity: showMobileNumberWidget ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 300),
+          child: Visibility(
+            visible: showMobileNumberWidget,
+            child: Consumer<PasswordShowHideProvider>(
+              builder: (context, provider, child) {
+                return editBoxWidget(
+                  context,
+                  editPhonePasswordTextEditingController,
+                  emptyValidation,
+                  getTranslatedValue(
+                    context,
+                    "password",
                   ),
-                ),
-              )
-            : const SizedBox.shrink(),
-        (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
-                "1")
-            ? getSizedBox(height: Constant.size10)
-            : const SizedBox.shrink(),
-        (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
-                "1")
-            ? Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushNamed(forgotPasswordScreen,
-                        arguments: [true, "user_exist"]);
-                  },
-                  child: CustomTextLabel(
-                    jsonKey: "forgot_password",
-                    style: TextStyle(
-                      color: ColorsRes.appColor,
-                      fontWeight: FontWeight.w600,
+                  getTranslatedValue(
+                    context,
+                    "enter_valid_password",
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  leadingIcon: Icon(
+                    Icons.password_rounded,
+                    color: ColorsRes.grey,
+                    size: screenWidth * 0.065, // Responsive icon size
+                  ),
+                  maxLines: 1,
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
+                  obscureText: provider.isPasswordShowing(),
+                  tailIcon: GestureDetector(
+                    onTap: () {
+                      provider.togglePasswordVisibility();
+                    },
+                    child: defaultImg(
+                      image: provider.isPasswordShowing() == true
+                          ? "hide_password"
+                          : "show_password",
+                      iconColor: ColorsRes.grey,
+                      width: screenWidth * 0.034, // Responsive width
+                      height: screenWidth * 0.034, // Responsive height
+                      padding: EdgeInsetsDirectional.all(screenWidth * 0.03), // Responsive padding
                     ),
                   ),
-                ),
-              )
+                  optionalTextInputAction: TextInputAction.done,
+                  TextInputType.text,
+                );
+              },
+            ),
+          ),
+        )
+            : const SizedBox.shrink(),
+        (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
+            "1")
+            ? SizedBox(height: verticalSpacing * 0.4)
+            : const SizedBox.shrink(),
+        (context.read<AppSettingsProvider>().settingsData!.phoneAuthPassword ==
+            "1")
+            ? Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(forgotPasswordScreen,
+                  arguments: [true, "user_exist"]);
+            },
+            child: CustomTextLabel(
+              jsonKey: "forgot_password",
+              style: TextStyle(
+                color: ColorsRes.appColor,
+                fontWeight: FontWeight.w600,
+                fontSize: screenWidth * 0.035, // Responsive font size
+              ),
+            ),
+          ),
+        )
             : const SizedBox.shrink(),
       ],
     );
   }
 
   emailPasswordWidget() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final verticalSpacing = screenHeight * 0.025; // 2.5% of screen height
+
     return Column(
       children: [
         editBoxWidget(
@@ -651,13 +726,13 @@ class _LoginAccountState extends State<LoginAccountScreen> {
           leadingIcon: Icon(
             Icons.alternate_email_outlined,
             color: ColorsRes.grey,
-            size: 25,
+            size: screenWidth * 0.065, // Responsive icon size
           ),
           maxLines: 1,
           fillColor: Theme.of(context).scaffoldBackgroundColor,
           TextInputType.emailAddress,
         ),
-        getSizedBox(height: Constant.size20),
+        SizedBox(height: verticalSpacing * 0.8),
         Consumer<PasswordShowHideProvider>(
           builder: (context, provider, child) {
             return editBoxWidget(
@@ -676,7 +751,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
               leadingIcon: Icon(
                 Icons.password_rounded,
                 color: ColorsRes.grey,
-                size: 25,
+                size: screenWidth * 0.065, // Responsive icon size
               ),
               maxLines: 1,
               fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -690,9 +765,9 @@ class _LoginAccountState extends State<LoginAccountScreen> {
                       ? "hide_password"
                       : "show_password",
                   iconColor: ColorsRes.grey,
-                  width: 13,
-                  height: 13,
-                  padding: EdgeInsetsDirectional.all(12),
+                  width: screenWidth * 0.034, // Responsive width
+                  height: screenWidth * 0.034, // Responsive height
+                  padding: EdgeInsetsDirectional.all(screenWidth * 0.03), // Responsive padding
                 ),
               ),
               optionalTextInputAction: TextInputAction.done,
@@ -700,7 +775,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
             );
           },
         ),
-        getSizedBox(height: Constant.size10),
+        SizedBox(height: verticalSpacing * 0.4),
         Align(
           alignment: AlignmentDirectional.centerEnd,
           child: GestureDetector(
@@ -713,11 +788,12 @@ class _LoginAccountState extends State<LoginAccountScreen> {
               style: TextStyle(
                 color: ColorsRes.appColor,
                 fontWeight: FontWeight.w600,
+                fontSize: screenWidth * 0.035, // Responsive font size
               ),
             ),
           ),
         ),
-        if (showOtpWidget) getSizedBox(height: Constant.size10),
+        if (showOtpWidget) SizedBox(height: verticalSpacing * 0.4),
         if (showOtpWidget)
           AnimatedOpacity(
             opacity: showOtpWidget ? 1.0 : 0.0,
@@ -726,7 +802,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
               visible: showOtpWidget,
               child: Column(
                 children: [
-                  SizedBox(height: Constant.size15),
+                  SizedBox(height: verticalSpacing * 0.6),
                   otpPinWidget(context: context, pinController: pinController)
                 ],
               ),
@@ -736,6 +812,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
     );
   }
 
+  // Rest of the methods remain the same as they contain business logic
   getRedirection() async {
     if (Constant.session.getBoolData(SessionManager.keySkipLogin) ||
         Constant.session.getBoolData(SessionManager.isUserLogin)) {
@@ -747,7 +824,7 @@ class _LoginAccountState extends State<LoginAccountScreen> {
       Navigator.pushNamedAndRemoveUntil(
         context,
         mainHomeScreen,
-        (route) => false,
+            (route) => false,
       );
     }
   }

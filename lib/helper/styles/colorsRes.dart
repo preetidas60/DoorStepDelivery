@@ -73,7 +73,7 @@ class ColorsRes {
       Colors.black.withValues(alpha: 0.005);
   static Color shimmerContentColorLight = Colors.white;
 
-  static Color activeRatingColor = Color(0xff55AE7B);
+  static Color activeRatingColor = Color(0xffffe643);
   static Color deActiveRatingColor = Color(0xffAEAEAE);
 
   static Color statusBgColorPendingPayment = Color(0xffFFF8EC);

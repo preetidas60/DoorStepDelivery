@@ -188,8 +188,8 @@ class HomeMainScreenState extends State<HomeMainScreen> {
 
     return ClipRRect(
       borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
+        topLeft: Radius.circular(0),
+        topRight: Radius.circular(0),
       ),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),

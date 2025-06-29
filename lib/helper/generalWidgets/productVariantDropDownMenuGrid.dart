@@ -62,8 +62,8 @@ class _ProductVariantDropDownMenuGridState
                             overflow: TextOverflow.clip,
                             style: TextStyle(
                               fontSize: 15,
-                              color: ColorsRes.appColor,
-                              fontWeight: FontWeight.w500,
+                              color: ColorsRes.mainTextColor,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           getSizedBox(width: 5),

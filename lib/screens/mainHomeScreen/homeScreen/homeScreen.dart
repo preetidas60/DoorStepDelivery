@@ -24,6 +24,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _isSearchVisible = true;
   static const double _scrollThreshold = 5.0; // Minimum scroll distance to trigger animation
 
+  // Search widget height - adjust this based on your actual search widget height
+  static const double _searchWidgetHeight = 60.0;
+
   @override
   void initState() {
     super.initState();
@@ -175,6 +178,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             children: [
               // Add padding for AppBar space
               SizedBox(height: appBarHeight),
+              // Add animated padding for search widget
+              AnimatedBuilder(
+                animation: _searchAnimationController,
+                builder: (context, child) {
+                  // Calculate the height based on search widget visibility
+                  double searchSpacing = _isSearchVisible
+                      ? _searchWidgetHeight * (1 - _searchAnimationController.value)
+                      : 0;
+                  return SizedBox(height: searchSpacing);
+                },
+              ),
               Expanded(
                 child: setRefreshIndicator(
                   refreshCallback: () async {
@@ -216,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 OfferImagesWidget(
                                   offerImages: map["top"]!.toList(),
                                 ),
+                              // Slider Widget - now properly positioned after search widget
                               ChangeNotifierProvider<SliderImagesProvider>(
                                 create: (context) => SliderImagesProvider(),
                                 child: SliderImageWidget(
@@ -308,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ],
           ),
 
+          SizedBox(height: 8,),
           // Search widget positioned below AppBar
           PositionedDirectional(
             top: appBarHeight,

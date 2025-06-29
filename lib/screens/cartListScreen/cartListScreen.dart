@@ -85,35 +85,55 @@ class _CartListScreenState extends State<CartListScreen> {
   }
 
   btnWidget() {
-    return gradientBtnWidget(context, 10, callback: () async {
-      if (await context.read<CartProvider>().checkCartItemsStockStatus() ==
-          false) {
-        if (Constant.session.isUserLoggedIn()) {
-          Navigator.pushNamed(context, checkoutScreen);
+    return GestureDetector(
+      onTap: () async {
+        if (await context.read<CartProvider>().checkCartItemsStockStatus() ==
+            false) {
+          if (Constant.session.isUserLoggedIn()) {
+            Navigator.pushNamed(context, checkoutScreen);
+          } else {
+            Navigator.pushNamed(context, loginAccountScreen,
+                    arguments: "add_to_cart_register")
+                .then(
+              (value) => callApi(),
+            );
+          }
         } else {
-          Navigator.pushNamed(context, loginAccountScreen,
-                  arguments: "add_to_cart_register")
-              .then(
-            (value) => callApi(),
-          );
-        }
-      } else {
-        showMessage(
+          showMessage(
             context,
             getTranslatedValue(context, "remove_sold_out_items_first"),
-            MessageType.warning);
-      }
-    },
-        otherWidgets: CustomTextLabel(
+            MessageType.warning,
+          );
+        }
+      },
+      child: Container(
+        height: 50,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [ColorsRes.appColor, ColorsRes.appColor.withOpacity(0.8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          color: Colors.orange, // Change this to your desired button color
+          borderRadius: BorderRadius.circular(10), // optional border
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: CustomTextLabel(
           jsonKey: Constant.session.isUserLoggedIn()
               ? "proceed_to_checkout"
               : "login_to_checkout",
           softWrap: true,
-          style: Theme.of(context).textTheme.titleMedium!.merge(TextStyle(
-              color: ColorsRes.appColorWhite,
-              letterSpacing: 0.5,
-              fontWeight: FontWeight.w500)),
-        ));
+          style: Theme.of(context).textTheme.titleMedium!.merge(
+                TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+        ),
+      ),
+    );
   }
 
   cartWidget() {

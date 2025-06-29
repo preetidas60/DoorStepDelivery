@@ -59,7 +59,9 @@ class _State extends State<ProductGridItemContainer> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: ColorsRes.appColorWhite,
+                                color: Theme
+                                    .of(context)
+                                    .cardColor,
                                 borderRadius: Constant.borderRadius7,
                               ),
                               child: ClipRRect(

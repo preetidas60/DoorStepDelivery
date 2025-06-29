@@ -18,11 +18,12 @@ class ProductListRatingBuilderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(totalRatings == 0){
-      return Container(
-        height: 19,
-      );
-    }else{
+    if (totalRatings == 0) {
+      return SizedBox.shrink();
+    } else {
+      // Ensure rating is within valid range
+      double validRating = averageRating.clamp(0.0, 5.0);
+
       return Padding(
         padding: EdgeInsetsDirectional.only(start: 5),
         child: Column(
@@ -36,19 +37,18 @@ class ProductListRatingBuilderWidget extends StatelessWidget {
                       (index) {
                     return defaultImg(
                       image: "rate_icon",
-                      iconColor: (averageRating.toInt() > index)
+                      iconColor: (validRating > index)
                           ? ColorsRes.activeRatingColor
                           : ColorsRes.deActiveRatingColor,
                       height: size,
                       width: size,
-                      padding:
-                      EdgeInsetsDirectional.only(end: spacing ?? 0),
+                      padding: EdgeInsetsDirectional.only(end: index < 4 ? (spacing ?? 0) : 0),
                     );
                   },
                 ),
                 getSizedBox(width: 5),
                 CustomTextLabel(
-                  text: "(${averageRating})",
+                  text: "(${validRating.toStringAsFixed(1)})",
                   style: TextStyle(
                     color: ColorsRes.mainTextColor,
                     fontSize: fontSize ?? 13,

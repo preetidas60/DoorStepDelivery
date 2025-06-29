@@ -15,23 +15,25 @@ Widget gradientBtnWidget(BuildContext context, double borderRadius,
       callback();
     },
     child: Container(
-      height: height ?? 45,
-      width: width,
-      alignment: Alignment.center,
-      decoration: DesignConfig.boxGradient(
-        borderRadius,
-        color1: color1,
-        color2: color2,
-      ),
-      child: otherWidgets ??= CustomTextLabel(
-        text: title,
-        softWrap: true,
-        style: Theme.of(context).textTheme.titleMedium!.merge(TextStyle(
-            color: ColorsRes.mainIconColor,
-            letterSpacing: 0.5,
-            fontWeight: FontWeight.w500)),
+    height: height ?? 45,
+    width: width,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: ColorsRes.appColor.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(borderRadius ?? 8),
+    ),
+    child: otherWidgets ??= CustomTextLabel(
+      text: title,
+      softWrap: true,
+      style: Theme.of(context).textTheme.titleMedium!.merge(
+        TextStyle(
+          color: ColorsRes.appColor,
+          letterSpacing: 0.5,
+          fontWeight: FontWeight.w100,
+        ),
       ),
     ),
+  ),
   );
 }
 
@@ -436,7 +438,7 @@ Widget getSearchWidget({
       Navigator.pushNamed(context, productSearchScreen);
     },
     child: Container(
-      color: Theme.of(context).cardColor,
+      color: Colors.transparent,
       padding: const EdgeInsetsDirectional.only(
         start: 10,
         end: 10,
@@ -446,8 +448,22 @@ Widget getSearchWidget({
         children: [
           Expanded(
             child: Container(
-              decoration: DesignConfig.boxDecoration(
-                  Theme.of(context).scaffoldBackgroundColor, 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.grey.withOpacity(0.3),
+                  width: 1.0,
+                ),
+                // Optional: Add a subtle shadow for better visual depth
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
               child: ListTile(
                 dense: true,
                 title: TextField(
@@ -804,13 +820,13 @@ Widget getRatingReviewItem({required ProductRatingList rating}) {
         ExpandableText(
           text: rating.review.toString(),
           max: 0.2,
-          color: ColorsRes.subTitleMainTextColor,
+          color: ColorsRes.mainTextColor,
         ),
       if (rating.review.toString().length <= 100)
         CustomTextLabel(
           text: rating.review.toString(),
           style: TextStyle(
-            color: ColorsRes.subTitleMainTextColor,
+            color: ColorsRes.mainTextColor,
           ),
         ),
       getSizedBox(height: 10),
